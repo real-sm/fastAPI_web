@@ -5,30 +5,39 @@ import uvicorn
 
 app = FastAPI()
 
+class Blog(BaseModel):
+    title: str
+    body: str
+    published: Optional[bool]
+
 # static routing
 @app.get('/')
 def index():
-    return {"name": "sumit", "title": "modak"}
+    return "blog_website"
 
 @app.get('/about')
 def about():
-    return {"about": {"dob": "2003"}}
+    return {"about": {"name": "sumit_modak", "dob": "2003"}}
 
-# dynamic routing
 @app.get('/blog/list')
 def list_blog():
-    return {"blog": "list_all_id"}
+    return {"blog": "list"}
 
+# post method
+@app.post('/blog/create')
+def create_blog(request: Blog):
+    return request
+
+# dynamic routing
 @app.get('/blog/{id}')
-def blog_show(id: int):
-    return {"blog": {"id": id}}
+def blog_show(id):
+    return {"id": id}
 
 @app.get('/blog/{id}/comments')
 def blog_comments(id: int, limit = 10):
-    return {"id": id, "count": limit}
+    return {"comments": {"id": id}, "count": limit}
 
 # query parameters
-# @app.get('/blog?limit=32&published=true')
 @app.get('/blog')
 def blog(limit: int = 10, published: bool = True, sort: Optional[str] = None):
     if published:
@@ -36,16 +45,5 @@ def blog(limit: int = 10, published: bool = True, sort: Optional[str] = None):
     else: 
         return {"data": f"{limit} blogs from the list"}
 
-class Blog(BaseModel):
-    title: str
-    body: str
-    published: Optional[bool]
-
-# post method
-@app.post('/blog')
-def create_blog(request: Blog):
-    return request
-
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="127.0.0.1", port=8000)
-    
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=9000)
